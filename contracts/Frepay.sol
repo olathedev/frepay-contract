@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity ^0.8.28;
 
+import './lib/Events.sol';
 // Uncomment this line to use console.log
 // import "hardhat/console.sol";
 
@@ -58,10 +59,27 @@ contract FrePay {
             milestones: milestones, 
             currentMilestoneIndex: 0
         });
+
+    emit Events.JobCreated(jobCounter, msg.sender, _description, _paymentAmount);
+
     }
 
+    function acceptJob(uint256 _jobId) external {
+        Job storage job = jobs[_jobId];
+        require(job.employer != address(0), "Job does not exist");
+        require(job.freelancer == address(0) && job.status == JobStatus.Unassigned, "Job already assigned by another freelancer");
+        require(block.timestamp < job.deadline, "Job deadline has passed");
+        
+        job.freelancer = msg.sender;
+        job.status = JobStatus.Assigned;
+
+        emit Events.JobAccepted(_jobId, msg.sender);
+    }
+
+    
 
     function getMilestones(uint256 jobId) external view returns (uint256[] memory) {
         return jobs[jobId].milestones;
     }
+
 }
