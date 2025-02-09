@@ -15,10 +15,5 @@ library Events {
         address indexed freelancer,
         uint256 amount
     );
-    event DisputeInitiated(uint256 indexed jobId, address indexed initiator);
-    event DisputeResolved(
-        uint256 indexed jobId,
-        address indexed winner,
-        uint256 amount
-    );
+    event JobCompleted(uint256 indexed jobId);
 }
